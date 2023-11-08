@@ -44,29 +44,32 @@ const paginationFilteringSorting = async (req, res) => {
 };
 
 const addProduct = async (req, res) => {
-    console.log('Received request to add a product:', req.body);
-
+  try {
+    // Some operation that might throw an error
     const { name, price, description, stock, quantity } = req.body;
 
-    try {
-        console.log('Creating a new product:', { name, price, description, stock, quantity });
+    console.log('Creating a new product:', { name, price, description, stock, quantity });
 
-        const newProduct = new Product({
-            name,
-            price,
-            description,
-            stock,
-            quantity
-        });
+    const newProduct = new Product({
+      name,
+      price,
+      description,
+      stock,
+      quantity
+    });
 
-        await newProduct.save();
+    await newProduct.save();
 
-        res.status(201).json({ message: 'Product added successfully', product: newProduct });
-    } catch (error) {
-        console.error('Error while adding a product:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-  };
+    res.status(201).json({ message: 'Product added successfully', product: newProduct });
+  } catch (error) {
+    // Use the errorHandler module to format and handle the error
+    const customError = errorHandler.handleCustomError(error, errorDictionary.SOME_ERROR_CODE);
+
+    // Send the error response with the appropriate status code and error message
+    res.status(customError.status).json(customError);
+  }
+};
+
   
   const addToCart = async (req, res) => {
     console.log('Received request to add to cart:', req.body);
