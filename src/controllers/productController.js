@@ -1,5 +1,7 @@
 const Product = require('../models/product.model');
 const Cart = require('../models/cart.model'); // Adjust the path as needed
+const errorHandler = require('../errorHandler.js');
+const errorDictionary = require('../errorDictionary.js');
 
 
 const products = [
