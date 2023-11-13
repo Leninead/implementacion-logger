@@ -16,4 +16,3 @@ router.delete('/remove-from-cart/:productId', jwtAuthMiddleware, cartController.
 router.get('/view-cart', jwtAuthMiddleware, cartController.viewCart);
 
 module.exports = router;
-

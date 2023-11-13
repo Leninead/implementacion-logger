@@ -7,6 +7,9 @@ const passport = require('passport');
 const jwtAuthMiddleware = passport.authenticate('jwt', { session: false });
 
 // Define your authentication route using the imported middleware
-router.post('/', jwtAuthMiddleware, authController.authenticateUser);
+router.post('/', jwtAuthMiddleware, (req, res) => {
+  req.log.info('User authentication requested'); // Log authentication request
+  authController.authenticateUser(req, res);
+});
 
 module.exports = router;

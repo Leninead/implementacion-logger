@@ -7,31 +7,39 @@ const userController = require('../controllers/userController');
 const jwtAuthMiddleware = passport.authenticate('jwt', { session: false });
 
 router.get('/', (req, res) => {
-  res.render('home'); // Renders views/home.ejs
+  logger.info('Home page accessed');
+  res.render('home');
 });
 
-router.post('/register', userController.registerUser);
+router.post('/register', (req, res) => {
+  // Log that a user is attempting to register
+  logger.info('User registration attempt');
+  userController.registerUser(req, res);
+});
 
 router.get('/register', (req, res) => {
   res.render('register');
 });
 
 router.post('/login', (req, res) => {
-  console.log('Login route reached'); 
+  logger.info('User login attempt');
   userController.loginUser(req, res);
 });
 
 router.get('/login', (req, res) => {
   res.render('login');
 });
+
 router.get('/logout', userController.logoutUser);
 
-// Protected route for admin dashboard
-router.get('/admin-dashboard', jwtAuthMiddleware, userController.adminDashboard);
+router.get('/admin-dashboard', jwtAuthMiddleware, (req, res) => {
+  logger.info('Admin dashboard accessed');
+  userController.adminDashboard(req, res);
+});
 
-// Protected route to get current user
-router.get('/api/sessions/current', jwtAuthMiddleware, userController.getCurrentUser);
+router.get('/api/sessions/current', jwtAuthMiddleware, (req, res) => {
+  logger.info('Current user accessed');
+  userController.getCurrentUser(req, res);
+});
 
 module.exports = router;
-
-

@@ -29,17 +29,15 @@ const registerUser = async (req, res) => {
       email,
       age,
       password: hashedPassword,
-      role: selectedRole
+      role: selectedRole,
     });
 
-    // In userController.js
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    console.log('Generated token:', token);
-    
+    req.log.debug('Generated token:', token);
 
-    return res.status(200).json({ message: 'Registration successful!' }); // Change this line
+    return res.status(200).json({ message: 'Registration successful!' });
   } catch (error) {
-    console.error('Error during registration: ', error);
+    req.log.error('Error during registration: ', error);
     return res.status(500).send('Internal server error');
   }
 };
@@ -61,29 +59,29 @@ const loginUser = async (req, res) => {
     }
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    req.log.debug('Generated token:', token);
 
     return res.status(200).json({ token });
   } catch (error) {
-    console.error('Error during login:', error);
+    req.log.error('Error during login:', error);
     return res.status(500).json({ message: 'Internal server error' });
   }
 };
 
-
 const logoutUser = async (req, res) => {
-  console.log('Logout initiated.');
-  req.session.destroy(err => {
+  req.log.debug('Logout initiated.');
+  req.session.destroy((err) => {
     if (err) {
-      console.error('Error destroying session:', err);
+      req.log.error('Error destroying session:', err);
       return res.status(500).send('Internal server error');
     }
-    console.log('Session destroyed.');
+    req.log.debug('Session destroyed.');
     res.redirect('/');
   });
 };
 
 const adminDashboard = async (req, res) => {
-  console.log('Requesting admin dashboard:', req.user);
+  req.log.debug('Requesting admin dashboard:', req.user);
 
   try {
     const user = await User.findById(req.user.id);
@@ -92,7 +90,7 @@ const adminDashboard = async (req, res) => {
       return res.status(401).json({ message: 'User not found' });
     }
 
-    console.log('User role:', user.role);
+    req.log.debug('User role:', user.role);
 
     if (user.role === 'admin') {
       return res.status(200).send('Welcome to the admin dashboard.');
@@ -100,7 +98,7 @@ const adminDashboard = async (req, res) => {
       return res.status(403).send('Access denied. Only admins allowed.');
     }
   } catch (error) {
-    console.error('Error finding user:', error);
+    req.log.error('Error finding user:', error);
     res.status(500).send('Internal server error.');
   }
 };
@@ -130,10 +128,11 @@ const getCurrentUser = (req, res) => {
   });
 };
 
+
 module.exports = {
   registerUser,
   loginUser,
   logoutUser,
   adminDashboard,
-  getCurrentUser
+  getCurrentUser,
 };
